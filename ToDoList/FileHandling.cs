@@ -14,12 +14,22 @@ internal class FileHandling
 
     public string FileName { get; set; }
     public string Dir { get; set; }
+
+    
     public void SaveToFile(List<string> linesToSave)
     {
         string path = Path.Combine(Dir, FileName);
-        StreamWriter sw = new StreamWriter(path);
+        FileInfo fileInfo = new FileInfo(path);
+        if (fileInfo.Exists) 
+        {
+            fileInfo.Delete();
+        }
+        StreamWriter sw=fileInfo.CreateText();
+     
+     
         foreach (string line in linesToSave)
         {
+           
             sw.WriteLine(line);
         }
 
@@ -28,18 +38,21 @@ internal class FileHandling
 
     public List<string> ReadFromFile()
     {
+        string line = string.Empty;
         string path = Path.Combine(Dir, FileName);
-        List<string> lines = new List<string>();
-
-        StreamReader sr = new StreamReader(path);
-
-        string line;
-
-        while ((line = sr.ReadLine()) is not null)
+        List<string> lines= new List<string>();
+        FileInfo fileInfo = new FileInfo(path);
+        if (fileInfo.Exists) 
         {
-            lines.Add(line);
+            StreamReader sr = new StreamReader(path);
+
+            while ((line = sr.ReadLine()) is not null)
+            {
+                lines.Add(line);
+            }
+            sr.Close();
         }
-        sr.Close();
+        
         return lines;
     }
 

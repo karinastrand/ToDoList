@@ -27,10 +27,10 @@ internal class Task
 
     public string TaskToString()
     {
-        return $"{TaskId},{TaskTitle},{DueDate},{TaskStatus},{ProjectId}";
+        return $"{TaskId},{TaskTitle},{DueDate.ToString("d")},{(int)TaskStatus},{ProjectId}";
     }
-
-    public void TaskFromString(string task)
+    
+    public Task TaskFromString(string task)
     {
            
         string[] taskParts=task.Split(',');
@@ -42,12 +42,12 @@ internal class Task
         int intStatus = 0;
         Int32.TryParse(taskParts[3],out intStatus);
         stat = (Status)intStatus;
-        Task myTask = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid);
-
+        Task taskFromFile = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid);
+        return taskFromFile;
     }
     public void PrintTask()
     {
-        WriteLine($"{TaskId} {TaskTitle} {DueDate} {TaskStatus} {ProjectId}");
+        WriteLine($"{TaskId.ToString().PadRight(20)}{TaskTitle.PadRight(20)}{DueDate.ToString("d").PadRight(20)}{TaskStatus.ToString().PadRight(20)}{ProjectId}");
     }
 
     
