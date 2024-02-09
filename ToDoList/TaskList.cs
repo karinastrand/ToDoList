@@ -12,7 +12,7 @@ internal class TaskList
 
 
     public List<Task> Tasks {  get; set; }
-    public string FileName { get; }
+    public string FileName { get; set; }
     public  FileHandling fileHandling { get;}
     
 

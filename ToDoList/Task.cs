@@ -30,10 +30,10 @@ internal class Task
         return $"{TaskId},{TaskTitle},{DueDate.ToString("d")},{(int)TaskStatus},{ProjectId}";
     }
     
-    public Task TaskFromString(string task)
+    public Task TaskFromString(string taskString)
     {
            
-        string[] taskParts=task.Split(',');
+        string[] taskParts=taskString.Split(',');
         int id = 0;
         Int32.TryParse(taskParts[0], out id);
         int projektid = 0;
@@ -42,8 +42,8 @@ internal class Task
         int intStatus = 0;
         Int32.TryParse(taskParts[3],out intStatus);
         stat = (Status)intStatus;
-        Task taskFromFile = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid);
-        return taskFromFile;
+        Task taskFromString = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid);
+        return taskFromString;
     }
     public void PrintTask()
     {

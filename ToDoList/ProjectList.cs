@@ -12,7 +12,9 @@ internal class ProjectList
     }
 
     public List<Project> Projects {  get; set; }
-    public string FileName { get; }
+    public string FileName { get; set; }
+
+
     public void ShowProjects()
     {
         WriteLine("My projects");
@@ -51,7 +53,7 @@ internal class ProjectList
         List<string> projecListToString = new List<string>();
         foreach (Project project in Projects) 
         {
-            projecListToString.Add(project.ProjectToFile());
+            projecListToString.Add(project.ProjectToString());
         }
         return projecListToString;
     }
@@ -82,7 +84,7 @@ internal class ProjectList
         foreach (string projectString in list)
         {
             Project project = new Project();
-            project = project.ProjectFromFile(projectString);
+            project = project.ProjectFromString(projectString);
             Projects.Add(project);
         }
     }

@@ -10,33 +10,33 @@ internal class Project
         ProjectId = projectId;
         ProjectName = projectName;
         ProjectDescription = projectDescription;
-        tasks=new TaskList();
+        Tasks=new TaskList();
     }
 
     public Project()
     {
-        tasks = new TaskList();
+        Tasks = new TaskList();
     }
 
     public int ProjectId { get; set; }
     public string ProjectName { get; set; }
     public string ProjectDescription { get; set; }
-    public TaskList tasks { get; set; }
+    public TaskList Tasks { get; set; }
 
-    public string ProjectToFile()
+    public string ProjectToString()
     {
         return $"{ProjectId.ToString()},{ProjectName},{ProjectDescription}";
 
     }
-    public Project ProjectFromFile(string savedProject)
+    public Project ProjectFromString(string projectString)
     {
-        Project projectFromFile = new Project();
+        Project projectFromString = new Project();
         int projectId = 0;
-        Int32.TryParse(savedProject.Split(',')[0] , out projectId);
-        projectFromFile.ProjectId = projectId;
-        projectFromFile.ProjectName = savedProject.Split(',')[1];
-        projectFromFile.ProjectDescription = savedProject.Split(',')[2];
-        return projectFromFile;
+        Int32.TryParse(projectString.Split(',')[0] , out projectId);
+        projectFromString.ProjectId = projectId;
+        projectFromString.ProjectName = projectString.Split(',')[1];
+        projectFromString.ProjectDescription = projectString.Split(',')[2];
+        return projectFromString;
     }
     public string PrintProject()
     {
