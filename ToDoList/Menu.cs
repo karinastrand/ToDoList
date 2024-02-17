@@ -1,7 +1,7 @@
 ﻿
 namespace ToDoList;
 
-internal class Menu
+public class Menu
 {
     public static void ShowStartMenu()
     {
@@ -17,68 +17,21 @@ internal class Menu
         WriteLine("(8) Save and Quit");
 
     }
-    public static void UserInput(TaskList tasks, ProjectList projects)
+    public static void ShowEditProjectMenu()
     {
-        WriteLine("Welcome to ToDo");
-        tasks.TaskInfo();
-        while(true)
-        {
-            ShowStartMenu();
-            string menuChoise = ReadLine();
-            switch (menuChoise)
-            {
-                case "1":
-                    {
-                        projects.ShowProjects();
-                        break;
-                    }
+        WriteLine("Pick an option");
+        WriteLine("(1) Edit Project");
+        WriteLine("(2) Remove Project");
+        WriteLine("(3) Quit");
 
-                case "2":
-                    {
-                        projects.AddNewProjects();
-                        break;
-                    }
-                case "3":
-                    {
-                        projects.EditProjects();
-                        break;
-                    }
-                case "4":
-                    {
-                       
-                        tasks.ShowTasks();
-                        break;
-                    }
-
-                case "5":
-                    {
-                        tasks.AddNewTasks(projects);
-                        break;
-                    }
-                case "6":
-                    {
-                        tasks.EditTasks();
-                        break;
-                    }
-                case "7": case "8":
-                    {
-                        tasks.SaveTaskList();
-                        projects.SaveProjectList();
-                      
-                        break;
-                    }
-               
-                
-                default:
-                    {
-                        WriteLine("You have to choose one of the alternativ in the list");
-                        break;
-                    }
-            }
-            if(menuChoise== "8")
-            {
-                break;
-            }
-        }
     }
+    public static void ShowEditTaskMenu()
+    {
+        WriteLine("Pick an option");
+        WriteLine("(1) Edit Task");
+        WriteLine("(2) Remove Task");
+        WriteLine("(3) Mark Task as Done");
+        WriteLine("(4) Quit");
+    }
+
 }

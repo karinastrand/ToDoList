@@ -1,27 +1,25 @@
 ﻿
-using System.Net.Http.Headers;
-
 namespace ToDoList;
 
-internal class Project
+public class Project
 {
     public Project(int projectId, string projectName, string projectDescription)
     {
         ProjectId = projectId;
         ProjectName = projectName;
         ProjectDescription = projectDescription;
-        Tasks=new TaskList();
+        TaskList=new Tasks();
     }
 
     public Project()
     {
-        Tasks = new TaskList();
+        TaskList = new Tasks();
     }
 
     public int ProjectId { get; set; }
     public string ProjectName { get; set; }
     public string ProjectDescription { get; set; }
-    public TaskList Tasks { get; set; }
+    public Tasks TaskList { get; set; }
 
     public string ProjectToString()
     {

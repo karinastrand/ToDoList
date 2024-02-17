@@ -2,7 +2,7 @@
 
 namespace ToDoList;
 
-internal enum Status
+public  enum Status
 {
     NotSet,
     Planned,

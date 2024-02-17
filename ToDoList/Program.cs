@@ -1,10 +1,7 @@
 ﻿
 using ToDoList;
-bool goOn = true;
-TaskList tasks = new TaskList();
-ProjectList projects = new ProjectList();
-tasks.LoadTaskList();
-projects.LoadProjectList();
 
+UI ui=new UI();
+ui.Input();
    
-    Menu.UserInput(tasks,projects);
+    

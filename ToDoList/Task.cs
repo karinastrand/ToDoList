@@ -1,20 +1,21 @@
 ﻿
 namespace ToDoList;
 
-internal class Task
+public class Task
 {
   
     public Task()
     {
     }
 
-    public Task(int taskId, string taskTitle, DateTime dueDate, Status taskStatus, int projectId)
+    public Task(int taskId, string taskTitle, DateTime dueDate, Status taskStatus, int projectId, string description)
     {
         TaskId = taskId;
         TaskTitle = taskTitle;
         DueDate = dueDate;
         TaskStatus = taskStatus;
         ProjectId = projectId;
+        Description = description;
     }
 
     
@@ -24,6 +25,7 @@ internal class Task
     public DateTime DueDate { get; set; }
     public Status TaskStatus { get; set; }
     public int ProjectId { get; set; }
+    public string Description { get; set; }
 
     public string TaskToString()
     {
@@ -42,7 +44,7 @@ internal class Task
         int intStatus = 0;
         Int32.TryParse(taskParts[3],out intStatus);
         stat = (Status)intStatus;
-        Task taskFromString = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid);
+        Task taskFromString = new Task(id, taskParts[1], Convert.ToDateTime(taskParts[2]), stat, projektid, taskParts[5]);
         return taskFromString;
     }
     public void PrintTask()

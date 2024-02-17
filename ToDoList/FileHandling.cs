@@ -1,59 +1,51 @@
-﻿
-
-namespace ToDoList;
-
-internal class FileHandling
+﻿namespace ToDoList;
+public class FileHandling
 {
-    
-
+    //Methods for writing to and reading from files.The files will be saved in the current directory.
+    public string FileName { get; set; }
+    public string Dir { get; set; }
     public FileHandling(string fileName)
     {
         FileName = fileName;
         Dir=Directory.GetCurrentDirectory();
-    }
-
-    public string FileName { get; set; }
-    public string Dir { get; set; }
-
-    
+    }  
     public void SaveToFile(List<string> linesToSave)
     {
         string path = Path.Combine(Dir, FileName);
         FileInfo fileInfo = new FileInfo(path);
+        //delete the file if it exists
         if (fileInfo.Exists) 
         {
             fileInfo.Delete();
         }
-        StreamWriter sw=fileInfo.CreateText();
-     
-     
-        foreach (string line in linesToSave)
+        //Creates a new file and writes to it
+        using (StreamWriter sw = fileInfo.CreateText())
         {
-           
-            sw.WriteLine(line);
+            foreach (string line in linesToSave)
+            {
+                sw.WriteLine(line);
+            }
+            sw.Close();
         }
-
-        sw.Close();
     }
-
     public List<string> ReadFromFile()
     {
         string line = string.Empty;
         string path = Path.Combine(Dir, FileName);
         List<string> lines= new List<string>();
         FileInfo fileInfo = new FileInfo(path);
+        //Reads from the file if it exists and returns a list of strings. If it doesn't exist an empty L
         if (fileInfo.Exists) 
         {
-            StreamReader sr = new StreamReader(path);
-
-            while ((line = sr.ReadLine()) is not null)
+            using (StreamReader sr = new StreamReader(path))
             {
-                lines.Add(line);
-            }
-            sr.Close();
-        }
-        
+                while ((line = sr.ReadLine()) is not null) //Reads until end of file.
+                {
+                    lines.Add(line);
+                }
+                sr.Close();
+            }          
+        }        
         return lines;
     }
-
 }
