@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.VisualBasic;
+
 namespace ToDoList;
 
 public class Tasks
@@ -16,13 +18,13 @@ public class Tasks
 
     public List<Task> TasksList { get; set; } = new List<Task>();
    
+   
     public string NameOfFile { get; set; } 
     public void TaskInfo()
     {
-        int todo = TasksList.Where(task => (task.TaskStatus == Status.Ongoing)).Count();
-        int tasksDone= TasksList.Where(task => (task.TaskStatus == Status.Finished)).Count();
-        int planed = TasksList.Count() - todo - tasksDone;
-        WriteLine($"You have {todo} tasks and {tasksDone} is finished. There are {planed} tasks not yet started." );
+        int todo = TasksList.Where(task => (task.TaskStatus == Status.ToDo)).Count();
+        int tasksDone= TasksList.Where(task => (task.TaskStatus == Status.Done)).Count();
+        WriteLine($"You have {todo} tasks to do and {tasksDone} tasks are finished.");
     }
     public void GetFromFile()
     {
@@ -40,7 +42,7 @@ public class Tasks
         
         while (true)
         {
-            Show();
+            Show(projects);
             Console.WriteLine("Add a new task, write q when you are done");
             Write("Title: ");
             string taskTitle = ReadLine();
@@ -56,15 +58,7 @@ public class Tasks
             {
                 taskId = TasksList.Max(task => task.Id) + 1;
             }
-            Status status = 0;
-            int statusInt = 0;
-            Write("Status (1.Planned 2.Ongoing 3.Finished): ");
-            string statusString = ReadLine();
-            Int32.TryParse(statusString, out statusInt);
-            if (statusInt > 0)
-            {
-                status = (Status)statusInt;
-            }
+            
             Write("DueDate: ");
             DateTime dueDate = DateTime.Now;
             string dateString = ReadLine();
@@ -75,44 +69,81 @@ public class Tasks
             Write("Projectid(choose id from the list above): ");
             string projectIdString = ReadLine();
             bool exists = false;
-            if (!Int32.TryParse(projectIdString, out projectId))
+            try
+            {
+                projectId=Convert.ToInt32(projectIdString);
+                if (!projects.ProjectExists(projectId))
+                {
+                    ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("There is no such id in your projectlist");
+                    Console.WriteLine("The task could not be added");
+                    ResetColor();
+                }
+                else
+                {
+                    TasksList.Add(new Task(taskId, taskTitle, description, dueDate, Status.ToDo, projectId));
+                    ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("The task was succesfully added");
+                    ResetColor();
+                }
+            }
+            catch (FormatException)
             {
                 ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Id has to be an integer");
                 Console.WriteLine("The task could not be added");
                 ResetColor();
             }
+            
 
-            else if (!projects.ProjectExists(projectId))
+            
+        }
+    } 
+    public void EditTasks(Projects projects)
+    {
+
+    }
+    public void MarkAsDone(Projects projects)
+    {
+        Show(projects);
+        Write("What task do you want to mark as done? (Choose from the list above and write it's id: ");
+        string taskIdString= ReadLine();
+        int taskId = 0;
+        try
+        {
+            taskId = Convert.ToInt32(taskIdString);
+            if (!TaskExists(taskId))
             {
                 ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your projectlist");
-                Console.WriteLine("The task could not be added");
+                Console.WriteLine("There is no such id in your tasklist");
+                Console.WriteLine("The task could not be changed");
                 ResetColor();
             }
             else
             {
-                TasksList.Add(new Task(taskId, taskTitle, description, dueDate, status, projectId));
+                int index = TasksList.FindIndex(task=>task.Id== taskId);
+                TasksList[index].TaskStatus= Status.Done;
                 ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("The task was succesfully added");
+                Console.WriteLine("The task was succesfully changed");
                 ResetColor();
             }
         }
+        catch (FormatException)
+        {
+            ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Id has to be an integer");
+            Console.WriteLine("The task could not be added");
+            ResetColor();
+        }
     }
-    public  void RemoveItems()
+    public  void RemoveTasks()
     {
 
     }
-    public  void TasksInfo()
+    
+    public void Show(Projects projects)
     {
-        int todo = TasksList.Where(item => ((Task)item).TaskStatus == Status.Ongoing).Count();
-        int tasksDone = TasksList.Where(item => ((Task)item).TaskStatus == Status.Finished).Count();
-        int planed = TasksList.Count() - todo - tasksDone;
-    }
-    public void Show()
-    {
-        Projects projects = new Projects("projects.txt");
-        projects.GetFromFile();
+       
         WriteLine("Id".PadRight(5) + "Title".PadRight(15) + "Description".PadRight(20)+"Due Date".PadRight(15)+"Status".PadRight(10)+"Project Id".PadRight(15)+ "Project Title");
         foreach (Task task in TasksList)
         {
@@ -122,8 +153,6 @@ public class Tasks
             WriteLine($"{project.Title}");
         }
     }
-
-    
 
     public  void SaveToFile()
     //Converts the Task Objects to a list of strings and saves the string list to the file.
@@ -135,5 +164,9 @@ public class Tasks
         }
         FileHandling fileHandling = new FileHandling(NameOfFile);
         fileHandling.SaveToFile(tasksToSave);
+    }
+    public bool TaskExists(int id)
+    {
+        return TasksList.Exists(task => task.Id == id);
     }
 }

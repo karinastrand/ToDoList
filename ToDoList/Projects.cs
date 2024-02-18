@@ -44,10 +44,15 @@ public class Projects
         }
 
     }
-    public  void RemoveItems()
+    public void EditProjects()
     {
 
     }
+    public  void RemoveProjects()
+    {
+
+    }
+
 
     public void GetFromFile()
     {

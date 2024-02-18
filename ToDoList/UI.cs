@@ -39,7 +39,7 @@ public class UI
                 case "3":
                     {
 
-                        tasksHandling.Show();
+                        tasksHandling.Show(projectsHandling);
                         break;
                     }
 
@@ -87,29 +87,29 @@ public class UI
             {
                 case "1":
                     {
-                      //  projectsHandling.EditItems();
+                          projectsHandling.EditProjects();
                         break;
                     }
 
                 case "2":
                     {
-                        projectsHandling.RemoveItems();
+                        projectsHandling.RemoveProjects();
                         break;
                     }
                 case "3":
                     {
-                      //  tasksHandling.EditItems();
+                         tasksHandling.EditTasks(projectsHandling);
                         break;
                     }
 
                 case "4":
                     {
-                      //  tasksHandling.MarkAsDone();
+                         tasksHandling.MarkAsDone(projectsHandling);
                         break;
                     }
                 case "5":
                     {
-                        tasksHandling.RemoveItems();
+                        tasksHandling.RemoveTasks();
                         break;
                     }
                 case "6":

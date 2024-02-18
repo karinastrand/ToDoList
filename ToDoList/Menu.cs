@@ -22,10 +22,10 @@ public class Menu
         WriteLine("Pick an option");
         WriteLine("(1) Edit Project");
         WriteLine("(2) Remove Project (Can only be done if the project doesn't contain any tasks");
-        WriteLine("(1) Edit Task");
-        WriteLine("(2) Remove Task");
-        WriteLine("(3) Mark Task as Done");
-        WriteLine("(4) Quit");
+        WriteLine("(3) Edit Task");
+        WriteLine("(4) Mark task as done");
+        WriteLine("(5) Remove Task");
+        WriteLine("(6) Quit");
     }
 
 }
