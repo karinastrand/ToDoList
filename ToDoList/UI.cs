@@ -32,33 +32,29 @@ public class UI
 
                 case "2":
                     {
-                        projectsHandling.AddNewProjects();
+                        projectsHandling.AddNewItems();
                         break;
                     }
+                
                 case "3":
-                    {
-                        EditProjectMenuChoise();
-                        break;
-                    }
-                case "4":
                     {
 
                         tasksHandling.Show();
                         break;
                     }
 
-                case "5":
+                case "4":
                     {
                         tasksHandling.AddNewTasks(projectsHandling);
                         break;
                     }
-                case "6":
+                case "5":
                     {
-                        EditTaskMenuChoise();
+                        EditMenuChoise();
                         break;
                     }
+                case "6":
                 case "7":
-                case "8":
                     {
                         tasksHandling.SaveToFile();
                         projectsHandling.SaveToFile();
@@ -71,50 +67,16 @@ public class UI
                         break;
                     }
             }
-            if (menuChoise == "8")
+            if (menuChoise == "7")
             {
                 break;
             }
         }
     }
     
-    public void EditProjectMenuChoise()
-    {
-        while(true) 
-        {
-            Menu.ShowEditProjectMenu();
-            string menuChoise = ReadLine();
-            switch (menuChoise)
-            {
-                case "1":
-                    {
-                        projectsHandling.EditProjects();
-                        break;
-                    }
+   
 
-                case "2":
-                    {
-                        projectsHandling.RemoveProjects();
-                        break;
-                    }
-                case "3":
-                    {                        
-                        break;
-                    }
-                default:
-                    {
-                        WriteLine("You have to choose one of the alternativ in the list");
-                        break;
-                    }
-            }
-            if (menuChoise == "3")
-            {
-                break;
-            }
-        }
-    }
-
-    public void EditTaskMenuChoise()
+    public void EditMenuChoise()
     {
         while (true)
         {
@@ -125,21 +87,32 @@ public class UI
             {
                 case "1":
                     {
-                        tasksHandling.EditTasks();
+                      //  projectsHandling.EditItems();
                         break;
                     }
 
                 case "2":
                     {
-                        tasksHandling.MarkAsDone();
+                        projectsHandling.RemoveItems();
                         break;
                     }
                 case "3":
                     {
-                        tasksHandling.RemoveTasks();
+                      //  tasksHandling.EditItems();
                         break;
                     }
+
                 case "4":
+                    {
+                      //  tasksHandling.MarkAsDone();
+                        break;
+                    }
+                case "5":
+                    {
+                        tasksHandling.RemoveItems();
+                        break;
+                    }
+                case "6":
                     {  
                         break;
                     }                
@@ -149,7 +122,7 @@ public class UI
                         break;
                     }
             }
-            if (menuChoise == "4")
+            if (menuChoise == "6")
             {
                 break;
             }

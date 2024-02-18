@@ -1,43 +1,43 @@
 ﻿
 namespace ToDoList;
 
-public class Tasks:ILists
+public class Tasks
 {
+    
+    public Tasks(string nameOfFile) 
+    {
+        NameOfFile = nameOfFile;
+    }
+
     public Tasks()
     {
-        List<Task> TaskList = new List<Task>();
-        NameOfFile = "myTasks.txt";
-        fileHandling=new FileHandling(NameOfFile);
+        NameOfFile = "tasks.txt";
     }
 
-
-    public List<Task> TaskList {  get; set; }
-    public string NameOfFile { get; set; }
-    public  FileHandling fileHandling { get;}
-    
-
-    
-
-    public void Show()
-    {
-        WriteLine("Your tasks: ");
-        WriteLine("Id".PadRight(20)+"Title".PadRight(20)+"DueDate".PadRight(20)+"Status".PadRight(20)+"ProjectId");
-        foreach (Task task in TaskList) 
-        {
-            task.PrintTask();
-           
-        }
-    }
-    
+    public List<Task> TasksList { get; set; } = new List<Task>();
+   
+    public string NameOfFile { get; set; } 
     public void TaskInfo()
     {
-        int todo = TaskList.Where(task => (task.TaskStatus == Status.Ongoing)).Count();
-        int tasksDone= TaskList.Where(task => (task.TaskStatus == Status.Finished)).Count();
-        int planed = TaskList.Count() - todo - tasksDone;
+        int todo = TasksList.Where(task => (task.TaskStatus == Status.Ongoing)).Count();
+        int tasksDone= TasksList.Where(task => (task.TaskStatus == Status.Finished)).Count();
+        int planed = TasksList.Count() - todo - tasksDone;
         WriteLine($"You have {todo} tasks and {tasksDone} is finished. There are {planed} tasks not yet started." );
     }
-    public void AddNewTasks(Projects projects)
+    public void GetFromFile()
     {
+        //Fetches strings from the file of stored tasks and convert the strings to Task objects.
+        FileHandling fileHandling = new FileHandling(NameOfFile);
+        List<string> savedTasks = fileHandling.ReadFromFile();
+        foreach (string taskString in savedTasks)
+        {
+            Task savedTask = new Task();
+            TasksList.Add(savedTask.ItemFromString(taskString));
+        }
+    }
+    public  void AddNewTasks(Projects projects)
+    {
+        
         while (true)
         {
             Show();
@@ -46,14 +46,15 @@ public class Tasks:ILists
             string taskTitle = ReadLine();
             if (taskTitle.ToLower().Trim() == "q")
             {
+                SaveToFile();
                 break;
             }
             Write("Description: ");
             string description = ReadLine();
             int taskId = 1;
-            if (TaskList.Count > 0)
+            if (TasksList.Count > 0)
             {
-                taskId = TaskList.Max(task => task.TaskId) + 1;
+                taskId = TasksList.Max(task => task.Id) + 1;
             }
             Status status = 0;
             int statusInt = 0;
@@ -70,6 +71,7 @@ public class Tasks:ILists
             DateTime.TryParse(dateString, out dueDate);
 
             int projectId = 1;
+            projects.Show();
             Write("Projectid(choose id from the list above): ");
             string projectIdString = ReadLine();
             bool exists = false;
@@ -81,7 +83,7 @@ public class Tasks:ILists
                 ResetColor();
             }
 
-            else if (!(projects.ProjectExists(projectId)))
+            else if (!projects.ProjectExists(projectId))
             {
                 ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("There is no such id in your projectlist");
@@ -90,70 +92,48 @@ public class Tasks:ILists
             }
             else
             {
-                TaskList.Add(new Task(taskId, taskTitle, dueDate, status, projectId, description));
+                TasksList.Add(new Task(taskId, taskTitle, description, dueDate, status, projectId));
                 ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("The task was succesfully added");
                 ResetColor();
             }
         }
     }
-    public void EditTasks()
-    {
-        
-    }
-    public void MarkAsDone()
+    public  void RemoveItems()
     {
 
     }
-    public void RemoveTasks()
+    public  void TasksInfo()
     {
-
+        int todo = TasksList.Where(item => ((Task)item).TaskStatus == Status.Ongoing).Count();
+        int tasksDone = TasksList.Where(item => ((Task)item).TaskStatus == Status.Finished).Count();
+        int planed = TasksList.Count() - todo - tasksDone;
     }
-
-    public void SaveToFile()
+    public void Show()
     {
-        //Converts the Projects in list of Projects to strings, adds them to a list of strings and writes them to the file.
-        List<string> taskToSave = new List<string>();
-        foreach (Task task in TaskList)
+        Projects projects = new Projects("projects.txt");
+        projects.GetFromFile();
+        WriteLine("Id".PadRight(5) + "Title".PadRight(15) + "Description".PadRight(20)+"Due Date".PadRight(15)+"Status".PadRight(10)+"Project Id".PadRight(15)+ "Project Title");
+        foreach (Task task in TasksList)
         {
-            if (task.TaskTitle.Length > 0)
-            {
-                taskToSave.Add(task.TaskToString());
-            }
+            int projectId = task.ProjectId;
+            Project project = projects.ProjectFromId(projectId);
+            Write(task.Print());
+            WriteLine($"{project.Title}");
+        }
+    }
+
+    
+
+    public  void SaveToFile()
+    //Converts the Task Objects to a list of strings and saves the string list to the file.
+    {
+        List<string> tasksToSave = new List<string>();
+        foreach (Task task in TasksList)
+        {
+            tasksToSave.Add(task.ItemToString());
         }
         FileHandling fileHandling = new FileHandling(NameOfFile);
-        fileHandling.SaveToFile(taskToSave);
+        fileHandling.SaveToFile(tasksToSave);
     }
-
-    public void GetFromFile()
-    {
-        FileHandling fileData = new FileHandling(NameOfFile);
-        List<string> savedTasks = fileData.ReadFromFile();
-        foreach (string taskString in savedTasks)
-        {
-            Task savedTask = new Task();
-            TaskList.Add(savedTask.TaskFromString(taskString));
-        }
-
-    }
-    public List<string> TaskListToStrings()
-    {
-
-        List<string> taskListToString = new List<string>();
-        foreach (Task task in TaskList)
-        {
-            taskListToString.Add(task.TaskToString());
-        }
-        return taskListToString;
-    }
-    public void StringListToTaskList(List<string> list)
-    {
-        foreach (string taskString in list)
-        {
-            Task task = new Task();
-            task = task.TaskFromString(taskString);
-            TaskList.Add(task);
-        }
-    }
-
 }

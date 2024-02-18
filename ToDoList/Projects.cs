@@ -1,108 +1,94 @@
 ﻿
+
 namespace ToDoList;
 
-public class Projects:ILists
+public class Projects 
 {
+    
+    public Projects(string nameOfFile)
+    {
+        NameOfFile = nameOfFile;
+    }
+
     public Projects()
     {
-        ProjectList = new List<Project>();
-        NameOfFile = "myProjects.txt";
+        NameOfFile = "projects.txt";
     }
 
-    public List<Project> ProjectList {  get; set; }
-    public string NameOfFile { get; set; }
-
-
-    public void Show()
+    public List<Project> ProjectsList { get; set; } = new List<Project>();
+    public string NameOfFile { get; set; } = "projects.txt";
+    public void AddNewItems()
     {
-        WriteLine("My projects");
-        WriteLine("Id".PadRight(20)+"Name".PadRight(20)+"Description");
-        foreach (Project project in ProjectList) 
-        {
-            Console.WriteLine(project.PrintProject()); 
-        }
-    }
-    public void AddNewProjects()
-    {
-        WriteLine("Add new projects, enter q when you are done");
+
         int id = 1;
         while (true)
         {
-            WriteLine("ProjectName: ");
-            string projectName = ReadLine();
-            if (projectName.ToLower().Trim() == "q")
+            Console.WriteLine("Add new projects, exit with 'q'");
+            WriteLine("Title: ");
+            string title = ReadLine();
+            if (title.ToLower().Trim() == "q")
             {
                 break;
             }
             WriteLine("Description:");
-            string projectDescription = ReadLine();
-            if (ProjectList.Count > 0)
+            string description = ReadLine();
+
+
+            if (ProjectsList.Count > 0)
             {
-                id = ProjectList.Max(project => project.ProjectId) + 1;
+                id = ProjectsList.Max(item => item.Id) + 1;
             }
-            Project newProject = new Project(id, projectName, projectDescription);
-            ProjectList.Add(newProject);
+            Project newProject = new Project(id, title, description);
+            ProjectsList.Add(newProject);
 
         }
 
     }
-    public void EditProjects()
+    public  void RemoveItems()
     {
-        
+
     }
-    
-    public void RemoveProjects()
-    {
-       
-    }
-    public List<string> ProjectListToStrings()
-    {
-        List<string> projecListToString = new List<string>();
-        foreach (Project project in ProjectList) 
-        {
-            projecListToString.Add(project.ProjectToString());
-        }
-        return projecListToString;
-    }
-    
-    public void SaveToFile()
-    {
-        //Converts the Projects in list of Projects to strings, adds them to a list of strings and writes them to the file.
-        List<string> projectToSave = new List<string>();
-        foreach (Project project in ProjectList)
-        {
-            if (project.ProjectName.Length > 0)
-            {
-                projectToSave.Add(project.ProjectToString());
-            }
-        }
-        FileHandling fileHandling = new FileHandling(NameOfFile);
-        fileHandling.SaveToFile(projectToSave);
-    }
-    
+
     public void GetFromFile()
     {
-        FileHandling fileData = new FileHandling(NameOfFile);
-        List<string> savedProjects = fileData.ReadFromFile();
+        //Fetches strings from the file of stored projects and convert the strings to Project objects.
+        FileHandling fileHandling = new FileHandling(NameOfFile);
+        List<string> savedProjects = fileHandling.ReadFromFile();
         foreach (string projectString in savedProjects)
         {
             Project savedProject = new Project();
-            ProjectList.Add(savedProject.ProjectFromString(projectString));
+            ProjectsList.Add(savedProject.ItemFromString(projectString));
         }
-
     }
+
+    public  void SaveToFile()
+    //Converts the Project Objects to a list of strings and saves the string list to the file.
+    {
+        List<string> projectsToSave = new List<string>();
+        foreach (Project project in ProjectsList)
+        {
+            projectsToSave.Add(project.ItemToString());
+        }
+        FileHandling fileHandling = new FileHandling(NameOfFile);
+        fileHandling.SaveToFile(projectsToSave);
+    }
+
+    public  void Show()
+    {
+        WriteLine("Id".PadRight(5)+"Title".PadRight(20)+"Description");
+        foreach(Project project in ProjectsList) 
+        {
+            WriteLine(project.Print());
+        }
+    }
+
     public bool ProjectExists(int id)
     {
-        return ProjectList.Exists(product => product.ProjectId == id);
+        return ProjectsList.Exists(project=>project.Id == id);
     }
-
-    public void StringListToProjectList(List<string> list)
+    public Project ProjectFromId(int id)
     {
-        foreach (string projectString in list)
-        {
-            Project project = new Project();
-            project = project.ProjectFromString(projectString);
-            ProjectList.Add(project);
-        }
+        Project project =ProjectsList.Where(project=>project.Id == id).FirstOrDefault();
+        return project;
     }
 }

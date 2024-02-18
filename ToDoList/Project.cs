@@ -1,44 +1,52 @@
-﻿
+﻿using System.Diagnostics;
+
 namespace ToDoList;
 
 public class Project
 {
-    public Project(int projectId, string projectName, string projectDescription)
+    public Project(int id, string title, string description)
     {
-        ProjectId = projectId;
-        ProjectName = projectName;
-        ProjectDescription = projectDescription;
-        TaskList=new Tasks();
+        Id = id;
+        Title = title;
+        Description = description;
     }
 
     public Project()
     {
-        TaskList = new Tasks();
     }
 
-    public int ProjectId { get; set; }
-    public string ProjectName { get; set; }
-    public string ProjectDescription { get; set; }
-    public Tasks TaskList { get; set; }
-
-    public string ProjectToString()
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public  virtual void AddNewItem(List<Project> itemList)
     {
-        return $"{ProjectId.ToString()},{ProjectName},{ProjectDescription}";
 
     }
-    public Project ProjectFromString(string projectString)
+    
+    public virtual string ItemToString()
     {
-        Project projectFromString = new Project();
-        int projectId = 0;
-        Int32.TryParse(projectString.Split(',')[0] , out projectId);
-        projectFromString.ProjectId = projectId;
-        projectFromString.ProjectName = projectString.Split(',')[1];
-        projectFromString.ProjectDescription = projectString.Split(',')[2];
-        return projectFromString;
+        return $"{Id.ToString()},{Title},{Description}";
+
     }
-    public string PrintProject()
+    public virtual Project ItemFromString(string itemString)
     {
-        return $"{ ProjectId.ToString().PadRight(20)}{ProjectName.PadRight(20)}{ProjectDescription.PadRight(20)}";
-        
+        Project itemFromString = new Project();
+        int id = 0;
+        Int32.TryParse(itemString.Split(',')[0], out id);
+        itemFromString.Id = id;
+        itemFromString.Title = itemString.Split(',')[1];
+        itemFromString.Description = itemString.Split(',')[2];
+        return itemFromString;
     }
+    public virtual string Print()
+    {
+        return $"{Id.ToString().PadRight(5)}{Title.PadRight(20)}{Description}";
+
+    }
+    public virtual void AddNewItem()
+    {
+
+    }
+    
+    
 }
