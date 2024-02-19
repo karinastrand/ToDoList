@@ -1,61 +1,53 @@
-﻿using System.Diagnostics;
-
-namespace ToDoList;
-
+﻿namespace ToDoList;
 public class Task:Project
-{
+{//Repersents a Task, is a subclass to Project
+    public DateTime DueDate { get; set; }
+    public Status TaskStatus { get; set; }
+    public Project TaskProject { get; set; }
+    public Task()
+    {
+    }
     public Task(int id, string title, string description,DateTime dueDate, Status taskStatus, Project taskProject) : base(id, title, description)
     {
         DueDate = dueDate;
         TaskStatus = taskStatus;
         TaskProject= taskProject;
     }
-
-    public Task()
-    {
-    }
-
-    public DateTime DueDate { get; set; }
-    public Status TaskStatus { get; set; }
-    public Project TaskProject { get; set; }
-    
-
     public override string ItemToString()
-    {
+    {//Returns a string that can be saved to a text file
         return $"{Id},{Title},{Description},{DueDate.ToString("d")},{(int)TaskStatus},{TaskProject.Title},{TaskProject.Description},{TaskProject.Id}";
     }
-    
     public override Task ItemFromString(string taskString)
     {
         Task taskFromString = new Task();
         try
-        {
+        {//the saved string contains seven parts separated with ','
             string[] taskParts = taskString.Split(',');
             int id = Convert.ToInt32(taskParts[0]);
             int projectId = Convert.ToInt32(taskParts[7]);
             Status stat = 0;
             int intStatus = Convert.ToInt32(taskParts[4]);
-            stat = (Status)intStatus;
+            stat = (Status)intStatus; //converts int to enum Status
             Project taskProject= new Project(projectId, taskParts[6],taskParts[5]);
             taskFromString = new Task(id, taskParts[1], taskParts[2], Convert.ToDateTime(taskParts[3]), stat, taskProject);
         }
         catch (FormatException)
-        {
+        {//taskPart[0],[4] and[7] has to be convertable to int and taskPart[3] has to be convertable to DateTime
             ForegroundColor=ConsoleColor.Red;
             WriteLine("It was not possible to make a task form the string due to format problems");
             ResetColor();
         }
         catch (IndexOutOfRangeException)
-        {
+        {//If the comma seperated parts of the string doesn't match what the Task constructor needs.
             ForegroundColor = ConsoleColor.Red;
-            WriteLine("It was not possible to make a task form the string, index out of range");
+            WriteLine("It was not possible to make a task form the string due to problem with the string");
             ResetColor();
         }
         return taskFromString;
     }
     public override string Print()
-    { 
-         return($"{DueDate.ToString("d").PadRight(15)}{Title.PadRight(20)}{Id.ToString().PadRight(5)}{Description.PadRight(25)}{TaskStatus.ToString().PadRight(10)}{TaskProject.Title.PadRight(25)}{TaskProject.Id}");
+    { //Converts Task to a string suiteable for writing on the console.
+        return ($"{DueDate.ToString("d").PadRight(15)}{Title.PadRight(20)}{Id.ToString().PadRight(5)}{Description.PadRight(25)}{TaskStatus.ToString().PadRight(10)}{TaskProject.Title.PadRight(25)}{TaskProject.Id}");
     }
   
 

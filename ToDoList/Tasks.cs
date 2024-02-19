@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace ToDoList;
 
-public class Tasks
+public class Tasks:Lists
 {
     
     public Tasks(string nameOfFile) 
@@ -31,8 +31,7 @@ public class Tasks
     public void GetFromFile()
     {
         //Fetches strings from the file of stored tasks and convert the strings to Task objects.
-        FileHandling fileHandling = new FileHandling(NameOfFile);
-        List<string> savedTasks = fileHandling.ReadFromFile();
+        List<string> savedTasks = GetFromFile(NameOfFile);
         try
         {
             foreach (string taskString in savedTasks)
@@ -60,10 +59,8 @@ public class Tasks
                     tasksToSave.Add(task.ItemToString());
                 }
             }
-            FileHandling fileHandling = new FileHandling(NameOfFile);
-            fileHandling.SaveToFile(tasksToSave);
+            SaveToFile(tasksToSave,NameOfFile);
         }
-        
     }
 
     public void Show()
@@ -205,10 +202,7 @@ public class Tasks
             taskId = Convert.ToInt32(taskIdString);
             if (!TaskExists(taskId))
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your tasklist");
-                Console.WriteLine("The task could not be edited");
-                ResetColor();
+                Messages.NotInList();
             }
             else
             {
@@ -216,12 +210,7 @@ public class Tasks
                 while(true)
                 {
                     Show();
-                    WriteLine("What do you want to change, write 'q' when you are ready (write an integer from the list) :");
-                    WriteLine("1. Title");
-                    WriteLine("2. Description");
-                    WriteLine("3. Due Date");
-                    WriteLine("4. Tie to another project");
-                    WriteLine("5. Quit");
+                    Menu.ShowEditTasksMenu();
 
                     string answer = ReadLine();
                     if(answer.ToLower().Trim() =="5")

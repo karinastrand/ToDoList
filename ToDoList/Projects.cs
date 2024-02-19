@@ -1,27 +1,18 @@
-﻿
-
-using System.Threading.Tasks;
-
-namespace ToDoList;
-
-public class Projects 
-{
-    
-    public Projects(string nameOfFile)
-    {
-        NameOfFile = nameOfFile;
-    }
-
+﻿namespace ToDoList;
+public class Projects :Lists
+{//Contains a list of Projects and the name of the file to save on
+    public List<Project> ProjectsList { get; set; } = new List<Project>();
+    public string NameOfFile { get; set; } = "projects.txt";
     public Projects()
     {
         NameOfFile = "projects.txt";
     }
-
-    public List<Project> ProjectsList { get; set; } = new List<Project>();
-    public string NameOfFile { get; set; } = "projects.txt";
-    public void AddNewItems()
+    public Projects(string nameOfFile)
     {
-
+        NameOfFile = nameOfFile;
+    }
+    public void AddNewItems()
+    {//Adding new Projets until the user writes 'q'
         int id = 1;
         while (true)
         {
@@ -34,45 +25,35 @@ public class Projects
             }
             WriteLine("Description:");
             string description = ReadLine();
-
-
             if (ProjectsList.Count > 0)
-            {
+            {//ProjectId is highest ProjectId in the list +1
                 id = ProjectsList.Max(item => item.Id) + 1;
             }
             Project newProject = new Project(id, title, description);
             ProjectsList.Add(newProject);
-
+            Messages.Success("The project has been added");
         }
-
     }
     public void EditProjects(Tasks tasks)
-    {
+    {//Edit project, name and deecription can be changed
         Show(tasks);
         Write("What project do you want to edit? (Choose from the list above and write it's id: ");
         string projectIdString = ReadLine();
         int projectId = 0;
         try
-        {
+        {//check if ther is a project with that id in the ProjectList
             projectId = Convert.ToInt32(projectIdString);
-            if (!ProjectExists(projectId))
+            if (!ProjectExists(projectId)) //Not in the ProjectList
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your projectlist");
-                Console.WriteLine("The project could not be edited");
-                ResetColor();
+                Messages.NotInList();
             }
             else
-            {
-                int index = ProjectsList.FindIndex(project => project.Id == projectId);
+            {//If the projectId was found in the list it is possible to edit it.
+                int index = ProjectsList.FindIndex(project => project.Id == projectId); //the index of the Project the user wants to edit
                 while (true)
-                {
-                    Show(tasks);
-                    WriteLine("What do you want to change (write an integer from the list) :");
-                    WriteLine("1. Title");
-                    WriteLine("2. Description");
-                    WriteLine("3. Quit");
-
+                {//Edits the project until the user writes 3
+                    Show(tasks); //uses TaskList to see how many tasks each project has
+                    Menu.ShowEditProjectsMenu();
                     string answer = ReadLine();
                     if (answer.ToLower().Trim() == "3")
                     {
@@ -96,30 +77,22 @@ public class Projects
                                 }
                            
                             default:
-                                {
-                                    ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("You have to choose a number from the list");
-                                    ResetColor();
+                                {//The user has to write an integer between 1 and 3
+                                    Messages.NotInMenuList();
                                     break;
                                 }
                         }
                     }
-                    catch (Exception)
+                    catch (FormatException) //the user wrote a menu choice which couldn't be converted to an integer
                     {
-                        ForegroundColor = ConsoleColor.Red;
-                        WriteLine("You have to write a number from the list");
-                        ResetColor();
+                        Messages.NotANumber();
                     }
                 }
-
             }
         }
-        catch (FormatException)
+        catch (FormatException)//the user wrote a projectid which couldn't be converted to an integer
         {
-            ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Id has to be an integer");
-            Console.WriteLine("The task could not be changed");
-            ResetColor();
+           Messages.NotANumber();
         }
     }
     public void RemoveProjects(Tasks tasks)
@@ -133,54 +106,37 @@ public class Projects
         {
             projectId = Convert.ToInt32(projectIdString);
             if (!ProjectExists(projectId))
-            {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your tasklist");
-                Console.WriteLine("The task could not be removed");
-                ResetColor();
+            {//Not a valid ProjectId
+               Messages.NotInList();
             }
             else if(NumberOfTasks(projectId,tasks)>0)
-            {
-                ForegroundColor=ConsoleColor.Red;
-                WriteLine("You have to remove the tasks before you remove the project.");
-                ResetColor();
+            {//The Project contains Tasks
+                Messages.ProjectIsNotEmpty();
             }
             else
-            {
-                int index = ProjectsList.FindIndex(project => project.Id == projectId);
+            {//ok to remove
+                int index = ProjectsList.FindIndex(project => project.Id == projectId);//the index of the Project the user wants to remove
                 if (ProjectsList.Remove(ProjectsList[index]))
                 {
-                    ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("The project was succesfully removed");
-                    ResetColor();
+                    Messages.Success("The Project was removed");
                 }
                 else
                 {
-                    ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("The project could not be removed");
-                    ResetColor();
+                    Messages.SomethingWentWrong();
                 }
-
             }
         }
         catch (FormatException)
         {
-            ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Id has to be an integer");
-            Console.WriteLine("The task could not be removed");
-            ResetColor();
+            Messages.NotANumber();//The inputed ProjectId was not on integer
         }
     }
-
-
-
     public void GetFromFile()
     {
         //Fetches strings from the file of stored projects and convert the strings to Project objects.
-        FileHandling fileHandling = new FileHandling(NameOfFile);
-        List<string> savedProjects = fileHandling.ReadFromFile();
+        List<string> savedProjects = GetFromFile(NameOfFile); //Base class takes care of filehandling
         try
-        {
+        {//Converts the returned strings to Project and saves them to ProjectList
             foreach (string projectString in savedProjects)
             {
                 Project savedProject = new Project();
@@ -189,13 +145,11 @@ public class Projects
         }
         catch (NullReferenceException)
         {
-
+            Messages.SomethingWentWrong();
         }
-        
     }
-
     public  void SaveToFile()
-    //Converts the Project Objects to a list of strings and saves the string list to the file.
+    //Converts the Project Objects to a list of strings and saves the string list to a file.
     {
         if (ProjectsList.Count > 0) 
         {
@@ -205,39 +159,35 @@ public class Projects
                 if(project.Id>0)
                 {
                     projectsToSave.Add(project.ItemToString());
-
                 }
             }
-            FileHandling fileHandling = new FileHandling(NameOfFile);
-            fileHandling.SaveToFile(projectsToSave);
+            SaveToFile(projectsToSave,NameOfFile); //Base class takes care of the filehandling
         }
-        
     }
 
     public  void Show(Tasks tasks)
-    {
+    {//Writes information of the Project to the console. 
         WriteLine("Id".PadRight(5)+"Title".PadRight(25)+"Description".PadRight(25)+"Number of Tasks");
         foreach(Project project in ProjectsList) 
         {
             Write(project.Print());
             if (tasks.TasksList.Count>0) 
             {
-                WriteLine($"{NumberOfTasks(project.Id, tasks)}");
+                WriteLine($"{NumberOfTasks(project.Id, tasks)}"); //Adds information about how many tasks the projects currently has
             }
             else 
-            {
+            {//if there is no Tasks in the TaskList 
                 WriteLine("0");
             }
-            
         }
     }
 
     public bool ProjectExists(int id)
-    {
+    {//returns true if the inputted id is an Id in the ProjectList
         return ProjectsList.Exists(project=>project.Id == id);
     }
     public int NumberOfTasks(int id,Tasks tasks)
-    {
+    {//returns the number of Tasks the Project has
         int numberOfTasks = 0;
         try
         {
@@ -245,33 +195,30 @@ public class Projects
         }
         catch (NullReferenceException)
         {
-            
+            Messages.SomethingWentWrong();
         }
         return numberOfTasks;
     }
-    public Project ProjectFromId(int id)
-    {
-        Project project =ProjectsList.Where(project=>project.Id == id).FirstOrDefault();
-        return project;
-    }
+    
     public void ChangeTitle(int index)
-    {
+    {//Change title of The Project
         WriteLine($"Old title: {ProjectsList[index].Title}");
         Write("New title: ");
         string title = ReadLine();
         ProjectsList[index].Title = title;
-        ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("The title is successfully changed");
-        ResetColor();
+        Messages.Success("The title is edited");
     }
     public void ChangeDescription(int index)
-    {
+    {//Change description of the Project
         WriteLine($"Old description: {ProjectsList[index].Description}");
         Write("New description: ");
         string description = ReadLine();
         ProjectsList[index].Description = description;
-        ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("The description is successfully changed");
-        ResetColor();
+        Messages.Success("The description is edited");
+    }
+    public Project ProjectFromId(int id)
+    {//returns the Project with the inputted id
+        Project project = ProjectsList.Where(project => project.Id == id).FirstOrDefault();
+        return project;
     }
 }

@@ -10,7 +10,7 @@ public class FileHandling
         Dir=Directory.GetCurrentDirectory();
     }  
     public void SaveToFile(List<string> linesToSave)
-    {
+    {//wrinting strings to a file
         string path = Path.Combine(Dir, FileName);
         FileInfo fileInfo = new FileInfo(path);
         //delete the file if it exists
@@ -29,7 +29,7 @@ public class FileHandling
         }
     }
     public List<string> ReadFromFile()
-    {
+    {//reading files from a file
         string line = string.Empty;
         string path = Path.Combine(Dir, FileName);
         List<string> lines= new List<string>();
