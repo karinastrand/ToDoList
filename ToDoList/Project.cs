@@ -40,13 +40,8 @@ public class Project
     }
     public virtual string Print()
     {
-        return $"{Id.ToString().PadRight(5)}{Title.PadRight(20)}{Description}";
+        return $"{Id.ToString().PadRight(5)}{Title.PadRight(25)}{Description.PadRight(25)}";
 
     }
-    public virtual void AddNewItem()
-    {
-
-    }
-    
-    
+   
 }

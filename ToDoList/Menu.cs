@@ -9,11 +9,12 @@ public class Menu
         WriteLine("Pick an option");
         WriteLine("(1) Show Project List");
         WriteLine("(2) Add new Project");
-        WriteLine("(3) Show Task List");
-        WriteLine("(4) Add new Task");
-        WriteLine("(5) Edit");
-        WriteLine("(6) Save");
-        WriteLine("(7) Save and Quit");
+        WriteLine("(3) Show Task List sorted by due date");
+        WriteLine("(4) Show Task List sorted by project");
+        WriteLine("(5) Add new Task");
+        WriteLine("(6) Edit");
+        WriteLine("(7) Save");
+        WriteLine("(8) Save and Quit");
 
     }
     

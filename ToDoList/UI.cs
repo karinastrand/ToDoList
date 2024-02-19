@@ -26,7 +26,7 @@ public class UI
             {
                 case "1":
                     {
-                        projectsHandling.Show();
+                        projectsHandling.Show(tasksHandling);
                         break;
                     }
 
@@ -39,22 +39,28 @@ public class UI
                 case "3":
                     {
 
-                        tasksHandling.Show(projectsHandling);
+                        tasksHandling.Show();
+                        break;
+                    } 
+                case "4":
+                    {
+
+                        tasksHandling.ShowTasksSortedByProject();
                         break;
                     }
 
-                case "4":
+                case "5":
                     {
                         tasksHandling.AddNewTasks(projectsHandling);
                         break;
                     }
-                case "5":
+                case "6":
                     {
                         EditMenuChoise();
                         break;
                     }
-                case "6":
                 case "7":
+                case "8":
                     {
                         tasksHandling.SaveToFile();
                         projectsHandling.SaveToFile();
@@ -67,7 +73,7 @@ public class UI
                         break;
                     }
             }
-            if (menuChoise == "7")
+            if (menuChoise == "8")
             {
                 break;
             }
@@ -87,13 +93,13 @@ public class UI
             {
                 case "1":
                     {
-                          projectsHandling.EditProjects();
+                          projectsHandling.EditProjects(tasksHandling);
                         break;
                     }
 
                 case "2":
                     {
-                        projectsHandling.RemoveProjects();
+                        projectsHandling.RemoveProjects(tasksHandling);
                         break;
                     }
                 case "3":
@@ -109,7 +115,7 @@ public class UI
                     }
                 case "5":
                     {
-                        tasksHandling.RemoveTasks();
+                        tasksHandling.RemoveTasks(projectsHandling);
                         break;
                     }
                 case "6":
