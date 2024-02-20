@@ -96,7 +96,6 @@ public class Tasks:Lists
         WriteLine($"You have {todo} tasks to do and {tasksDone} tasks are finished.");
         ResetColor();
     }
-    
     public void AddNewTasks(Projects projects)
     { //Adding new Tasks until the user writes 'q'      
         while (true)
@@ -187,9 +186,7 @@ public class Tasks:Lists
             taskToEdit = Functions.GetTask(taskId,TasksList);
         }
         return taskToEdit;
-    }
-    
-   
+    }   
     public void ChangeTitle()
     {
         Task taskToEdit = TaskToEdit("On which task to you want to change title (write id)?");
@@ -200,12 +197,11 @@ public class Tasks:Lists
             string title = ReadLine();
             taskToEdit.Title = title;
             Messages.Success("The title was successfully changed");
-        }
-        
+        }    
     }
     public void ChangeDescription()
     {
-        Task taskToEdit = TaskToEdit("On which task to you want to change title (write id)?");
+        Task taskToEdit = TaskToEdit("On which task to you want to change description (write id)?");
         if (taskToEdit.Id > 0)
         {
             WriteLine($"Old description: {taskToEdit.Description}");
@@ -228,7 +224,6 @@ public class Tasks:Lists
             Write("New date: ");
             DateTime newDueDate;
             string dateString = ReadLine();
-
             try
             {
                 newDueDate = Convert.ToDateTime(dateString);
@@ -249,7 +244,6 @@ public class Tasks:Lists
             taskToEdit.TaskStatus = Status.Done;
         }
     }
-
     public void ChangeProject(Projects projects)
     {//Change which Project the Task belongs to
         Task taskToEdit = TaskToEdit("Which task do you want to tie to another project (write id)?");
@@ -296,7 +290,4 @@ public class Tasks:Lists
             }
         }
     }
-
-
-
 }
