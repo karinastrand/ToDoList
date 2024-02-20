@@ -1,8 +1,17 @@
 ﻿namespace ToDoList;
 public abstract class Lists
 {//Base class for the different lists, takes care of the filehandling
+   
     public string NameOfFile { get; set; }
-    
+    protected Lists()
+    {
+        NameOfFile = "lists.txt";
+    }
+    protected Lists(string nameOfFile)
+    {
+        NameOfFile = nameOfFile;
+    }
+
     //Fetches the list from the file
     public List<string> GetFromFile(string nameOfFile)
     {

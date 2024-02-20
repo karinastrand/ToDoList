@@ -1,54 +1,32 @@
-﻿
-using Microsoft.VisualBasic;
-using System.Drawing;
-using System.Runtime.InteropServices;
+﻿using System.Threading.Tasks;
 
 namespace ToDoList;
-
 public class Tasks:Lists
-{
-    
-    public Tasks(string nameOfFile) 
-    {
-        NameOfFile = nameOfFile;
-    }
-
-    public Tasks()
-    {
-        NameOfFile = "tasks.txt";
-    }
-
+{//Contains a list of Tasks and name of the file where it i is stored, the base class takes care of the file handling
+  
     public List<Task> TasksList { get; set; } = new List<Task>();
-   
-   
-    public string NameOfFile { get; set; } 
-    public void TaskInfo()
+    public Tasks(string nameOfFile) : base(nameOfFile)
     {
-        int todo = TasksList.Where(task => (task.TaskStatus == Status.ToDo)).Count();
-        int tasksDone= TasksList.Where(task => (task.TaskStatus == Status.Done)).Count();
-        WriteLine($"You have {todo} tasks to do and {tasksDone} tasks are finished.");
     }
-    public void GetFromFile()
-    {
-        //Fetches strings from the file of stored tasks and convert the strings to Task objects.
+    public void GetFromString()
+    {//Fetches strings from the file of stored tasks and convert the strings to Task objects. 
+        //Base class fetches a list of strings from a file
         List<string> savedTasks = GetFromFile(NameOfFile);
         try
-        {
+        {//Converting strings to Tasks and puts them in the list of Tasks
             foreach (string taskString in savedTasks)
             {
                 Task savedTask = new Task();
                 TasksList.Add(savedTask.ItemFromString(taskString));
             }
         }
-        catch (Exception)
+        catch (NullReferenceException)
         {
-            WriteLine("Couldn't read from the file");
-        }
-        
+            Messages.SomethingWentWrong();
+        }      
     }
-    public void SaveToFile()
-    //Converts the Task Objects to a list of strings and saves the string list to the file.
-    {
+    public void TasksToStringList()
+    {    //Converts the Task Objects to a list of strings and saves the string list to the file.
         if (TasksList.Count > 0) 
         {
             List<string> tasksToSave = new List<string>();
@@ -59,69 +37,71 @@ public class Tasks:Lists
                     tasksToSave.Add(task.ItemToString());
                 }
             }
-            SaveToFile(tasksToSave,NameOfFile);
+            SaveToFile(tasksToSave,NameOfFile);//Base class takes care of saving to file
         }
     }
-
-    public void Show()
-    {
+    public void ShowTasks()
+    {//Prints the TaskList to the console sorted by DueDate
         try
         {
             List<Task> tasksSortedByDate = TasksList.OrderBy(task => task.DueDate).ToList();
-            WriteLine("Due Date".PadRight(15) +"Title".PadRight(20)+"Id".PadRight(5) + "Description".PadRight(25) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
+            WriteLine("My tasks");
+            ForegroundColor=ConsoleColor.Blue;
+            WriteLine("Due Date".PadRight(15) +"Title".PadRight(20)+"Id".PadRight(5) + "Description".PadRight(31) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
+            ResetColor();
             foreach (Task task in tasksSortedByDate)
             {
-                if (task.TaskStatus == Status.ToDo)
+                if (task.TaskStatus == Status.ToDo)//if Task has status done the foreground color will be default color
                 {
-                    ForegroundColor = TaskColor(task.DueDate);
+                    ForegroundColor = Functions.SetColor(task.DueDate,5,20);//The color depends on how many days it is to DueDate, <5:red, <20 and >5 yellow else green
                 }
                 WriteLine(task.Print());
                 ResetColor();
-
             }
         }
         catch (NullReferenceException)
         {
-
-            
+            Messages.SomethingWentWrong();  
         }
-       
     }
     public void ShowTasksSortedByProject()
-    {
+    {//Prints the TaskList to the console sorted by ProjectName and then DueDate
         try
         {
             List<Task> tasksSortedByProject = TasksList.OrderBy(task => task.TaskProject.Title).ThenBy(task => task.DueDate).ToList();
-
-            WriteLine("Due Date".PadRight(15) + "Title".PadRight(20) + "Id".PadRight(5) +  "Description".PadRight(25) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
+            WriteLine("My tasks sorted by project title");
+            ForegroundColor=ConsoleColor.Cyan;
+            WriteLine("Due Date".PadRight(15) + "Title".PadRight(20) + "Id".PadRight(5) + "Description".PadRight(31) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
+            ResetColor();
             foreach (Task task in tasksSortedByProject)
             {
-                if (task.TaskStatus==Status.ToDo)
+                if (task.TaskStatus == Status.ToDo)
                 {
-                    ForegroundColor = TaskColor(task.DueDate);
+                    ForegroundColor = Functions.SetColor(task.DueDate, 5, 20);
                 }
                 WriteLine(task.Print());
                 ResetColor();
-
             }
         }
         catch (NullReferenceException)
         {
-
-          
+            Messages.SomethingWentWrong();
         }
-        
     }
-    public bool TaskExists(int id)
-    {
-        return TasksList.Exists(task => task.Id == id);
+    public void TaskInfo()
+    {//Info displayed when the program starts.
+        int todo = TasksList.Where(task => (task.TaskStatus == Status.ToDo)).Count(); //Tasks with status todo
+        int tasksDone = TasksList.Where(task => (task.TaskStatus == Status.Done)).Count();//Total number of Tasks
+        ForegroundColor = ConsoleColor.DarkBlue;
+        WriteLine($"You have {todo} tasks to do and {tasksDone} tasks are finished.");
+        ResetColor();
     }
-    public  void AddNewTasks(Projects projects)
-    {
-        
+    
+    public void AddNewTasks(Projects projects)
+    { //Adding new Tasks until the user writes 'q'      
         while (true)
         {
-            Show();
+            ShowTasks();
             Console.WriteLine("Add a new task, write q when you are done");
             Write("Title: ");
             string taskTitle = ReadLine();
@@ -129,8 +109,12 @@ public class Tasks:Lists
             {
                 break;
             }
-            Write("Description: ");
+            Write("Description (max 30 characters) : ");
             string description = ReadLine();
+            if (description.Length > 30)
+            {
+                description = description.Substring(30);
+            }
             int taskId = 1;
             if (TasksList.Count > 0)
             {
@@ -146,307 +130,173 @@ public class Tasks:Lists
             }
             catch (FormatException)
             {
-                ForegroundColor=ConsoleColor.Red;
-                WriteLine("You have to enter a date on the format 'yyyy-mm-dd' for example '2024-05-11'");
-                ResetColor();
-                break;
+                Messages.NotADate();
             }
-            
-
             int projectId = 1;
-            projects.Show(this);
+            projects.ShowProjects(this);
             Write("Projectid(chose id from the list above): ");
             string projectIdString = ReadLine();
-            bool exists = false;
             try
-            {
+            {//Checks if the input is convertable to an int and if there is a Project with that id in the ProjectList
                 projectId=Convert.ToInt32(projectIdString);
-                if (!projects.ProjectExists(projectId))
+                if (!Functions.ProjectExists(projects,projectId))
                 {
-                    ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("There is no such id in your projectlist");
-                    Console.WriteLine("The task could not be added");
-                    ResetColor();
+                    Messages.NotInList();
                 }
                 else
-                {
-                    Project taskProject = new Project();
-                    taskProject=GetTaskProject(projectId,projects);
+                {//if everything is ok the Task is created and added to the TaskList
+                    Project taskProject=Functions.GetProject(projectId,projects.ProjectsList); //fetches the Project from the ProjectList
                     TasksList.Add(new Task(taskId, taskTitle, description, dueDate, Status.ToDo, taskProject));
-                    ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("The task was succesfully added");
-                    ResetColor();
+                    Messages.Success("The Task was succesfully added!");
                 }
             }
             catch (FormatException)
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Id has to be an integer");
-                Console.WriteLine("The task could not be added");
-                ResetColor();
-                break;
-            }
-            
-
-            
+                Messages.NotANumber();
+            } 
         }
-    } 
-    public void EditTasks(Projects projects)
-    {
-        Show();
-        Write("What task do you want to edit? (Choose from the list above and write it's id: ");
+    }
+    public Task TaskToEdit(string message)
+    {//Which project is going to be edited?
+        ShowTasks();
+        Write($"{message}: ");
         string taskIdString = ReadLine();
         int taskId = 0;
+        int index = -1;
+        Task taskToEdit = new Task();
         try
-        {
+        {//check if ther is a project with that id in the ProjectList
             taskId = Convert.ToInt32(taskIdString);
-            if (!TaskExists(taskId))
+            if (!Functions.TasksExists(this,taskId)) //Not in the ProjectList
             {
                 Messages.NotInList();
+                
             }
             else
-            {
-                int index = TasksList.FindIndex(task => task.Id == taskId);
-                while(true)
-                {
-                    Show();
-                    Menu.ShowEditTasksMenu();
-
-                    string answer = ReadLine();
-                    if(answer.ToLower().Trim() =="5")
-                    {
-                        break;
-                    }
-                    int answerIndex = 0;
-                    try
-                    {
-                        answerIndex = Convert.ToInt32(answer);
-                        switch (answerIndex) 
-                        {
-                            case 1:
-                                {
-                                    ChangeTitle(index);
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    ChangeDescription(index);
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    ChangeDueDate(index);
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    TieToAnotherProject(index,projects);
-                                    break;
-                                }
-                            default: 
-                                {
-                                    ForegroundColor=ConsoleColor.Red;
-                                    Console.WriteLine("You have to choose a number from the list");
-                                    ResetColor();
-                                    break;
-                                }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        ForegroundColor=ConsoleColor.Red;
-                        WriteLine("You have to write a number from the list");
-                        ResetColor();
-                    }
-                }
-
+            {//If the projectId was found in the list it is possible to edit it.
+                index = TasksList.FindIndex(task => task.Id == taskId); //the index of the Task the user wants to edit
             }
         }
-        catch (FormatException)
+        catch (FormatException)//the user wrote a projectid which couldn't be converted to an integer
         {
-            ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Id has to be an integer");
-            Console.WriteLine("The task could not be changed");
-            ResetColor();
+            Messages.NotANumber();
+            
+        }
+        if (index > -1)
+        {
+            taskToEdit = Functions.GetTask(taskId,TasksList);
+        }
+        return taskToEdit;
+    }
+    
+   
+    public void ChangeTitle()
+    {
+        Task taskToEdit = TaskToEdit("On which task to you want to change title (write id)?");
+        if(taskToEdit.Id>0) 
+        {
+            WriteLine($"Old title: {taskToEdit.Title}");
+            Write("New title: ");
+            string title = ReadLine();
+            taskToEdit.Title = title;
+            Messages.Success("The title was successfully changed");
+        }
+        
+    }
+    public void ChangeDescription()
+    {
+        Task taskToEdit = TaskToEdit("On which task to you want to change title (write id)?");
+        if (taskToEdit.Id > 0)
+        {
+            WriteLine($"Old description: {taskToEdit.Description}");
+            Write("New description (max 30 characters) : ");
+            string description = ReadLine();
+            taskToEdit.Description = description;
+            if (description.Length > 30)
+            {
+                description = description.Substring(30);
+            }
+            Messages.Success("The description was successfully changed");
         }
     }
-    public void MarkAsDone(Projects projects)
+    public void ChangeDueDate()
     {
-        Show();
-        Write("What task do you want to mark as done? (Choose from the list above and write it's id: ");
-        string taskIdString= ReadLine();
-        int taskId = 0;
-        try
+        Task taskToEdit = TaskToEdit("On which task to you want to change due date (write id)?");
+        if (taskToEdit.Id > 0)
         {
-            taskId = Convert.ToInt32(taskIdString);
-            if (!TaskExists(taskId))
+            WriteLine($"Old due date: {DateOnly.FromDateTime(taskToEdit.DueDate)}");
+            Write("New date: ");
+            DateTime newDueDate;
+            string dateString = ReadLine();
+
+            try
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your tasklist");
-                Console.WriteLine("The task could not be changed");
-                ResetColor();
+                newDueDate = Convert.ToDateTime(dateString);
+                taskToEdit.DueDate = newDueDate;
+                Messages.Success("The due date was successfully changed");
             }
-            else
+            catch (Exception)
             {
-                int index = TasksList.FindIndex(task=>task.Id== taskId);
-                TasksList[index].TaskStatus= Status.Done;
-                ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("The task was succesfully changed");
-                ResetColor();
+                Messages.NotADate();
             }
-        }
-        catch (FormatException)
-        {
-            ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Id has to be an integer");
-            Console.WriteLine("The task could not be changed");
-            ResetColor();
         }
     }
-    public  void RemoveTasks(Projects projects)
-    {
-        Show();
-        Write("What task do you want to remove? (Choose from the list above and write it's id: ");
-        string taskIdString = ReadLine();
-        int taskId = 0;
-        try
+    public void MarkAsDone()
+    {//Change Status to Done
+        Task taskToEdit = TaskToEdit(("What task do you want to mark as done (Write id)?"));
+        if (taskToEdit.Id > 0)
         {
-            taskId = Convert.ToInt32(taskIdString);
-            if (!TaskExists(taskId))
+            taskToEdit.TaskStatus = Status.Done;
+        }
+    }
+
+    public void ChangeProject(Projects projects)
+    {//Change which Project the Task belongs to
+        Task taskToEdit = TaskToEdit("Which task do you want to tie to another project (write id)?");
+        if (taskToEdit.Id > 0)
+        {
+            projects.ShowProjects(this);
+            WriteLine($"Old project: {taskToEdit.TaskProject.Id}: {taskToEdit.TaskProject.Title}");
+            Write("New project: ");
+            int projectId = 0;
+            string idString = ReadLine();
+
+            try
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your tasklist");
-                Console.WriteLine("The task could not be removed");
-                ResetColor();
-            }
-            else
-            {
-                int index = TasksList.FindIndex(task => task.Id == taskId);
-                if(TasksList.Remove(TasksList[index]))
+                projectId = Convert.ToInt32(idString);
+
+                if (!Functions.ProjectExists(projects, projectId))
                 {
-                    ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("The task was succesfully removed");
-                    ResetColor();
+                    Messages.NotInList();
                 }
                 else
                 {
-                    ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("The task could not be removed");
-                    ResetColor();
+                    taskToEdit.TaskProject = Functions.GetProject(projectId, projects.ProjectsList);
+                    Messages.Success("Success! The task has a new project");
                 }
-               
             }
-        }
-        catch (FormatException)
-        {
-            ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Id has to be an integer");
-            Console.WriteLine("The task could not be removed");
-            ResetColor();
-        }
-    }
-    
-    
-
-   
-
-    public void ChangeTitle(int index)
-    {
-        WriteLine($"Old title: {TasksList[index].Title}");
-        Write("New title: ");
-        string title=ReadLine();
-        TasksList[index].Title = title;
-        ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("The title is successfully changed");
-        ResetColor();
-    }
-    public void ChangeDescription(int index)
-    {
-        WriteLine($"Old description: {TasksList[index].Description}");
-        Write("New description: ");
-        string description = ReadLine();
-        TasksList[index].Description = description;
-        ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("The description is successfully changed");
-        ResetColor();
-    }
-    public void ChangeDueDate(int index)
-    {
-        WriteLine($"Old due date: {DateOnly.FromDateTime(TasksList[index].DueDate)}");
-        Write("New date: ");
-        DateTime newDueDate;
-        string dateString = ReadLine();
-        
-        try
-        {
-            newDueDate=Convert.ToDateTime(dateString);
-            TasksList[index].DueDate = newDueDate;
-            ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("The date is successfully changed");
-            ResetColor();
-        }
-        catch (Exception)
-        {
-            ForegroundColor = ConsoleColor.Red;
-            WriteLine("You have to write a date in the format yyyy-mm-dd (for example 2024-03-27)");
-            ResetColor();
-        }
-    }
-    public void TieToAnotherProject(int index, Projects projects)
-    {
-        projects.Show(this);
-        WriteLine($"Old project: {TasksList[index].TaskProject.Id}");
-        Write("New project: ");
-        int projectId = 0;
-        string idString = ReadLine();
-
-        try
-        {
-            projectId = Convert.ToInt32(idString);
-           
-            if (!projects.ProjectExists(projectId))
+            catch (Exception)
             {
-                ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There is no such id in your projectlist");
-                Console.WriteLine("The task could not be tied to that project");
-                ResetColor();
+                Messages.NotANumber();
             }
-            TasksList[index].TaskProject = GetTaskProject(projectId,projects);
-            ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("The task is now successfully tied to a new project");
-            ResetColor();
-        }
-        catch (Exception)
-        {
-            ForegroundColor = ConsoleColor.Red;
-            WriteLine("You have to write an integer from the list of projects");
-            ResetColor();
         }
     }
-    public Project GetTaskProject(int projectId,Projects projects)
+    public void RemoveTasks()
     {
-        Project taskProject = new Project();
-        return taskProject = projects.ProjectsList.Where(project => project.Id == projectId).FirstOrDefault();
-
+        Task taskToRemove = TaskToEdit("What task do you want to remove (write id)?");
+        if (taskToRemove.Id > 0)
+        {
+            if (TasksList.Remove(taskToRemove))
+            {
+                Messages.Success("The task was removed");
+            }
+            else
+            {
+                Messages.SomethingWentWrong();
+            }
+        }
     }
-    public ConsoleColor TaskColor(DateTime dueDate)
-    {
-        ConsoleColor color = ConsoleColor.DarkBlue;
-        TimeSpan diff=(dueDate-DateTime.Now);
-        int days = diff.Days;
-        if (days < 5)
-        {
-            color = ConsoleColor.Red;
-        }
-        else if (days<20)
-        {
-            color = ConsoleColor.DarkYellow;
-        }
-        else
-        {
-            color = ConsoleColor.Green;
-        }
 
-        return color;
-    }
+
+
 }

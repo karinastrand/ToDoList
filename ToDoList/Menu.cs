@@ -18,27 +18,15 @@ public class Menu
     public static void ShowEditMenu()
     {//Edit Menu
         WriteLine("Pick an option");
-        WriteLine("(1) Edit Project");
-        WriteLine("(2) Remove Project (Can only be done if the project doesn't contain any tasks");
-        WriteLine("(3) Edit Task");
-        WriteLine("(4) Mark task as done");
-        WriteLine("(5) Remove Task");
-        WriteLine("(6) Quit");
-    }
-    public static void ShowEditProjectsMenu() 
-    {
-        WriteLine("What do you want to edit (write an integer from the list) :");
-        WriteLine("1. Title");
-        WriteLine("2. Description");
-        WriteLine("3. Quit");
-    }
-    public static void ShowEditTasksMenu()
-    {
-        WriteLine("What do you want to change, write 'q' when you are ready (write an integer from the list) :");
-        WriteLine("1. Title");
-        WriteLine("2. Description");
-        WriteLine("3. Due Date");
-        WriteLine("4. Tie to another project");
-        WriteLine("5. Quit");
+        WriteLine("(1) Change Project Title");
+        WriteLine("(2) Change Project Description");
+        WriteLine("(3) Remove Project (Can only be done if the project doesn't contain any tasks");
+        WriteLine("(4) Change Task Title");
+        WriteLine("(5) Change Task Descritpion");
+        WriteLine("(6) Change Task Due date");
+        WriteLine("(7) Mark Task as done");
+        WriteLine("(8) Tie Task to another project");
+        WriteLine("(9) Remove Task");
+        WriteLine("(10) Quit");
     }
 }

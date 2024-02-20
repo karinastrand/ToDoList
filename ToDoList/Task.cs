@@ -1,6 +1,6 @@
 ﻿namespace ToDoList;
-public class Task:Project
-{//Repersents a Task, is a subclass to Project
+public class Task:Item
+{//Repersents a Task, is a sub class to Item
     public DateTime DueDate { get; set; }
     public Status TaskStatus { get; set; }
     public Project TaskProject { get; set; }
@@ -18,7 +18,7 @@ public class Task:Project
         return $"{Id},{Title},{Description},{DueDate.ToString("d")},{(int)TaskStatus},{TaskProject.Title},{TaskProject.Description},{TaskProject.Id}";
     }
     public override Task ItemFromString(string taskString)
-    {
+    {//returns a Task created from a string (saved on a text file)
         Task taskFromString = new Task();
         try
         {//the saved string contains seven parts separated with ','
@@ -28,26 +28,22 @@ public class Task:Project
             Status stat = 0;
             int intStatus = Convert.ToInt32(taskParts[4]);
             stat = (Status)intStatus; //converts int to enum Status
-            Project taskProject= new Project(projectId, taskParts[6],taskParts[5]);
+            Project taskProject= new Project(projectId, taskParts[5],taskParts[6]);
             taskFromString = new Task(id, taskParts[1], taskParts[2], Convert.ToDateTime(taskParts[3]), stat, taskProject);
         }
         catch (FormatException)
         {//taskPart[0],[4] and[7] has to be convertable to int and taskPart[3] has to be convertable to DateTime
-            ForegroundColor=ConsoleColor.Red;
-            WriteLine("It was not possible to make a task form the string due to format problems");
-            ResetColor();
+            Messages.Error("It was not possible to make a task form the string due to format problems");
         }
         catch (IndexOutOfRangeException)
         {//If the comma seperated parts of the string doesn't match what the Task constructor needs.
-            ForegroundColor = ConsoleColor.Red;
-            WriteLine("It was not possible to make a task form the string due to problem with the string");
-            ResetColor();
+            Messages.Error("It was not possible to make a task form the string due to problem with the string");
         }
         return taskFromString;
     }
     public override string Print()
     { //Converts Task to a string suiteable for writing on the console.
-        return ($"{DueDate.ToString("d").PadRight(15)}{Title.PadRight(20)}{Id.ToString().PadRight(5)}{Description.PadRight(25)}{TaskStatus.ToString().PadRight(10)}{TaskProject.Title.PadRight(25)}{TaskProject.Id}");
+        return ($"{DueDate.ToString("d").PadRight(15)}{Title.PadRight(20)}{Id.ToString().PadRight(5)}{Description.PadRight(31)}{TaskStatus.ToString().PadRight(10)}{TaskProject.Title.PadRight(25)}{TaskProject.Id}");
     }
   
 
