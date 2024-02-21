@@ -1,12 +1,10 @@
 ﻿namespace ToDoList;
 public class Projects :Lists
 {//Contains a list of Projects and the name of the file to save on
-   
     public List<Project> ProjectsList { get; set; } = new List<Project>();
     public Projects(string nameOfFile) : base(nameOfFile)
     {
     }
-
     public void GetFromString()
     {
         //Fetches strings from the file of stored projects and convert the strings to Project objects.
@@ -60,9 +58,10 @@ public class Projects :Lists
         }
         WriteLine();
     }
-    public void AddNewItems()
+    public void AddNewItems(Tasks tasks)
     {//Adds new Projets until the user writes 'q'
         int id = 1;
+        ShowProjects(tasks);
         while (true)
         {
             Console.WriteLine("Add new projects, exit with 'q'");
@@ -88,7 +87,7 @@ public class Projects :Lists
             Messages.Success("The project has been added");
         }
     }
-    public Project ProjectToEdit(Tasks tasks, string message)
+    private Project ProjectToEdit(Tasks tasks, string message)
     {//Which project is going to be edited/removed?
         ShowProjects(tasks);
         Write($"{message}: ");
@@ -118,9 +117,9 @@ public class Projects :Lists
         }
         return projectToEdit;
     }
-    
     public void ChangeTitle(Tasks tasks)
     {//Change title of The Project
+        ShowProjects(tasks);
         Project projectToEdit = ProjectToEdit(tasks, "Which project do you want to change title on (write id)?");//Returns the project the user wants to remove
         if (projectToEdit.Id > 0) //if the user has chosen an existing project
         {
@@ -137,6 +136,7 @@ public class Projects :Lists
     }
     public void ChangeDescription(Tasks tasks)
     {//Change description of the Project
+        ShowProjects(tasks);
         Project projectToEdit = ProjectToEdit(tasks, "Which project do you want to change description on (write id)?");//Returns the project the user wants to remove
         if (projectToEdit.Id > 0)//if the user has chosen an existing project
         {
@@ -156,8 +156,9 @@ public class Projects :Lists
         }
     }
     public void RemoveProjects(Tasks tasks)
-    {//Removes a projet, only possible if the project is empty of tasks    
+    {//Removes a projet, only possible if the project is empty of tasks
         Project projectToRemove = ProjectToEdit(tasks, "What task do you want to remove (write id)?");//Returns the project the user wants to remove
+        ShowProjects(tasks);
         if (projectToRemove.Id > 0)//if the user has chosen an existing project
         {
             if (Functions.NumberOfTasks(projectToRemove.Id, tasks) > 0) //Not possible to remove a Project if it contains Tasks
@@ -177,6 +178,4 @@ public class Projects :Lists
             }
         }
     }
-
-
 }

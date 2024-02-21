@@ -46,7 +46,7 @@ public class Tasks:Lists
         {
             List<Task> tasksSortedByDate = TasksList.OrderBy(task => task.DueDate).ToList();
             WriteLine("My tasks");
-            ForegroundColor=ConsoleColor.Blue;
+            ForegroundColor=ConsoleColor.Yellow;
             WriteLine("Due Date".PadRight(15) +"Title".PadRight(20)+"Id".PadRight(5) + "Description".PadRight(31) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
             ResetColor();
             foreach (Task task in tasksSortedByDate)
@@ -70,7 +70,7 @@ public class Tasks:Lists
         {
             List<Task> tasksSortedByProject = TasksList.OrderBy(task => task.TaskProject.Title).ThenBy(task => task.DueDate).ToList();
             WriteLine("My tasks sorted by project title");
-            ForegroundColor=ConsoleColor.Cyan;
+            ForegroundColor=ConsoleColor.DarkYellow;
             WriteLine("Due Date".PadRight(15) + "Title".PadRight(20) + "Id".PadRight(5) + "Description".PadRight(31) + "Status".PadRight(10) + "Project Title".PadRight(25) + "Project Id");
             ResetColor();
             foreach (Task task in tasksSortedByProject)
@@ -155,7 +155,7 @@ public class Tasks:Lists
             } 
         }
     }
-    public Task TaskToEdit(string message)
+    private Task TaskToEdit(string message)
     {//Which project is going to be edited?
         ShowTasks();
         Write($"{message}: ");
@@ -189,6 +189,7 @@ public class Tasks:Lists
     }   
     public void ChangeTitle()
     {
+        ShowTasks();
         Task taskToEdit = TaskToEdit("On which task to you want to change title (write id)?");
         if(taskToEdit.Id>0) 
         {
@@ -201,6 +202,7 @@ public class Tasks:Lists
     }
     public void ChangeDescription()
     {
+        ShowTasks();
         Task taskToEdit = TaskToEdit("On which task to you want to change description (write id)?");
         if (taskToEdit.Id > 0)
         {
@@ -217,6 +219,7 @@ public class Tasks:Lists
     }
     public void ChangeDueDate()
     {
+        ShowTasks();
         Task taskToEdit = TaskToEdit("On which task to you want to change due date (write id)?");
         if (taskToEdit.Id > 0)
         {
@@ -238,6 +241,7 @@ public class Tasks:Lists
     }
     public void MarkAsDone()
     {//Change Status to Done
+        ShowTasks();
         Task taskToEdit = TaskToEdit(("What task do you want to mark as done (Write id)?"));
         if (taskToEdit.Id > 0)
         {
@@ -246,6 +250,7 @@ public class Tasks:Lists
     }
     public void ChangeProject(Projects projects)
     {//Change which Project the Task belongs to
+        ShowTasksSortedByProject();
         Task taskToEdit = TaskToEdit("Which task do you want to tie to another project (write id)?");
         if (taskToEdit.Id > 0)
         {
@@ -277,6 +282,7 @@ public class Tasks:Lists
     }
     public void RemoveTasks()
     {
+        ShowTasks();
         Task taskToRemove = TaskToEdit("What task do you want to remove (write id)?");
         if (taskToRemove.Id > 0)
         {

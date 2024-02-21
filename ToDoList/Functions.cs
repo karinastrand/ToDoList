@@ -1,20 +1,15 @@
-﻿using System.Drawing;
-
-namespace ToDoList;
-
+﻿namespace ToDoList;
 public static class Functions
 {//Helpers
     public static Project GetProject(int projectId, List<Project> projects)
     {//returns the Project with the id=projectId
         Project project = new Project();
         return project = projects.Where(project => project.Id == projectId).FirstOrDefault();
-
     }
     public static Task GetTask(int taskId, List<Task> tasks)
     {//returns the Task with the id=taskId
         Task task = new Task();
         return task = tasks.Where(task => task.Id == taskId).FirstOrDefault();
-
     }
     public static ConsoleColor SetColor(DateTime date, int numberOfDays, int numberOfDays2 = 0)//numberOfDays2 is default=0 so not necessary
     {//returns color depending on how many days a date is from today
@@ -49,7 +44,7 @@ public static class Functions
         return numberOfTasks;
     }
     public static void EditProjectTitle(int projectId,string title, Tasks tasks)
-    {
+    {//If the Project has been changed the projects in Tasks has to be changed too
         foreach (Task task in tasks.TasksList) 
         {
             if(task.TaskProject.Id==projectId)           
@@ -59,7 +54,7 @@ public static class Functions
         }
     }
     public static void EditProjectDescription(int projectId, string description, Tasks tasks)
-    {
+    {//If the Project has been changed the projects in Tasks has to be changed too
         foreach (Task task in tasks.TasksList)
         {
             if (task.TaskProject.Id == projectId)

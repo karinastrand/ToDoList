@@ -33,7 +33,7 @@ public class UI
                 case "2":
                     {
                         //Adding new Projects
-                        projectsHandling.AddNewItems();
+                        projectsHandling.AddNewItems(tasksHandling);
                         break;
                     }
                 
